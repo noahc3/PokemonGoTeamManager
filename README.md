@@ -1,6 +1,8 @@
 # Pokemon GO Team Manager
 
-View and manage your Pokemon GO accounts from your PC.
+View and manage your Pokemon GO accounts from your PC
+
+Note that the code is a big garbled mess. I've never made something using two (arguably terrible) languages before. I began working on this before API's for Java and C# were available.
 
 ## Credits
 

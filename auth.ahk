@@ -233,6 +233,8 @@ Parse()
 	pla15 := 0
 	pla16 := 0
 	pla17 := 0
+	pla18 := 0
+	pla19 := 0
 	
 	var1 := 0
 	var2 := 0
@@ -373,7 +375,7 @@ Parse()
 				
 				FileAppend, `nAppending to CSV`n, output.txt
 			
-				FileAppend, pokemon`,%var1%`,%var2%`,%var3%`,%var4%`,%var5%`,%var6%`,%var7%`,%var8%`,%var9%`,%var10%`,%var11%`,%var12%`,%var13%`,%var17%`n,output.csv
+				FileAppend, pokemon`,%var1%`,%var2%`,%var3%`,%var4%`,%var5%`,%var6%`,%var7%`,%var8%`,%var9%`,%var10%`,%var11%`,%var12%`,%var13%`,%var17%`,`,`n,output.csv
 				var1 := 0
 				var2 := 0
 				var3 := 0
@@ -499,6 +501,39 @@ Parse()
 			StringUpper, var17, var17, T
 			FileAppend, Pokemon UUID: %var1%, output.txt
 		}
+		else if currentLine contains POKECOIN
+		{
+			tmpReadLine := readLine + 1
+		
+			FileReadLine, currentLine, input.txt, %tmpReadLine%
+			if currentLine contains amount
+			{
+				StringTrimLeft, pla18, currentLine, 11
+				FileAppend, Pokecoins: %pla18%, output.txt
+			}
+			else
+			{
+				pla18 := 0
+				FileAppend, No Pokecoins!, output.txt
+			}
+			
+		}
+		else if currentLine contains STARDUST
+		{
+			tmpReadLine := readLine + 1
+			FileReadLine, currentLine, input.txt, %tmpReadLine%
+			if currentLine contains amount
+			{
+				StringTrimLeft, pla19, currentLine, 11
+				FileAppend, Stardust: %pla19%, output.txt
+			}
+			else
+			{
+				pla19 := 0
+				FileAppend, No Stardust!, output.txt
+			}
+			
+		}
 		else
 		{
 			FileAppend, Unknown Line : %currentLine%, output.txt
@@ -518,9 +553,12 @@ Parse()
 		
 		
 	}
+	
+	
+	
 	FileAppend, Appending Trainer Data to CSV, output.txt
 	
-	trainerDataPrepend = trainer`,%pla1%`,%pla2%`,%pla4%`,%pla5%`,%pla6%`,%pla7%`,%pla8%`,%pla9%`,%pla10%`,%pla11%`,%pla12%`,%pla13%`,%pla14%,%pla3%`n
+	trainerDataPrepend = trainer`,%pla1%`,%pla2%`,%pla4%`,%pla5%`,%pla6%`,%pla7%`,%pla8%`,%pla9%`,%pla10%`,%pla11%`,%pla12%`,%pla13%`,%pla14%,%pla3%`,%pla18%`,%pla19%`n
 	FileRead, csvPrependVal, output.csv 
 	FileDelete, output.csv
 	FileAppend, %trainerDataPrepend%, output.csv
@@ -543,6 +581,8 @@ Parse()
 	pla15 := 0
 	pla16 := 0
 	pla17 := 0
+	pla18 := 0
+	pla19 := 0
 	
 	Progress, Off
 	

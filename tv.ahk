@@ -98,6 +98,7 @@ Gui, Add, Text, x162 y144 w150 h20 vAIV, Attack:
 Gui, Add, Text, x162 y164 w150 h20 vDIV, Defense: 
 Gui, Add, Text, x162 y184 w150 h20 vHIV, HP: 
 Gui, Add, Text, x162 y204 w150 h20 vPIV, Perfection: 
+Gui, Add, Text, x162 y224 w150 h20 vPokeCoins, PokeCoins: 
 Gui, Add, Picture, x340 y127 w16 h16 , %A_ScriptDir%\res\img\pokeball.png
 Gui, Add, Text, x360 y129 w230 h20 vPokeball, Pokeball Used: Standard
 Gui, Add, Text, x360 y159 w230 h20 vFWeight, Full Weight (KG): 
@@ -174,6 +175,7 @@ PokeList:
 		GuiControl, show, Transfer
 		GuiControl, show, Bulk Transfer
 		GuiControl, show, PIV
+		GuiControl, hide, PokeCoins
 		GuiControl, Text, IV, IVs:
 		
 		GuiControl, Text, CP, CP: %val2%
@@ -373,6 +375,8 @@ DefaultDDL()
 		val12 := CSV_ReadCell("teamList", 1, 13)
 		val13 := CSV_ReadCell("teamList", 1, 14)
 		val17 := CSV_ReadCell("teamList", 1, 15)
+		val32 := CSV_ReadCell("teamList", 1, 16)
+		val31 := CSV_ReadCell("teamList", 1, 17)
 		
 		val5 := round(val5, 2)
 		
@@ -382,7 +386,7 @@ DefaultDDL()
 		GuiControl, Hide, IDBase
 		GuiControl, Hide, Transfer
 		GuiControl, Hide, Bulk Transfer
-		GuiControl, Hide, PIV
+		GuiControl, Show, PokeCoins
 		GuiControl, Text, IV, Stats:
 		GuiControl, Text, Weight, Battles Attempted: %val1% 
 		GuiControl, Text, Height, Battles Won: %val2% 
@@ -396,6 +400,8 @@ DefaultDDL()
 		GuiControl, Text, Move2, Prestige Dropped: %val12%
 		GuiControl, Text, HPText, XP: %val4%`/%val7%
 		GuiControl, Text, UUID, Previous Level XP: %val17%
+		GuiControl, Text, PIV, Stardust: %val31%
+		GuiControl, Text, PokeCoins, PokeCoins: %val32%
 		GuiControl, , PokemonIcon, %A_ScriptDir%\res\img\trainer_1.png
 		
 		val21 := ((val4 / val7) * 100)

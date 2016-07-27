@@ -21,6 +21,7 @@ val11 = 0
 val12 = 0
 val13 = 0
 val17 = 0
+val31 = 0
 	
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
@@ -29,6 +30,8 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #Include %A_ScriptDir%\libs\csv_lib.ahk
 #Include %A_ScriptDir%\libs\tf.ahk
 #Include %A_ScriptDir%\libs\zip.ahk
+
+Gui, Main:default
 
 CSV_Load("output.csv", "teamList", ",")
 
@@ -66,18 +69,20 @@ while foundTrainer = 0
 tempVar1 = 2
 while not tempVar1 = teamLength
 {
+	tempVar12 := round(((CSV_ReadCell("teamList", tempVar1, 10) + CSV_ReadCell("teamList", tempVar1, 11) + CSV_ReadCell("teamList", tempVar1, 12)) / 45) * 100, 2)
+	
 	tempVar2 := CSV_ReadCell("teamList", tempVar1, 2)
 	
 	tempVar4 := CSV_ReadCell("teamList", tempVar1, 3)
 	
 	
 	
-	amountList = %amountList%%tempVar2%`, CP: %tempVar4%|
+	amountList = %amountList%%tempVar2%`,   CP: %tempVar4%`,   IV: %tempVar12%`%|
 	
 	tempVar1 += 1
 }
 
-Gui, Add, DropDownList, x12 y29 w140 h240 AltSubmit gPokeList vPokeList Choose1 HwndPokelisthwnd, %amountList%
+Gui, Add, DropDownList, x12 y29 w220 h240 AltSubmit gPokeList vPokeList Choose1 HwndPokelisthwnd, %amountList%
 Gui, Add, Picture, x32 y69 w100 h100 +Border vPokemonIcon, %A_ScriptDir%\res\pokemon\1.png
 Gui, Add, Text, x32 y179 w100 h20 +Center +Border vIDText, ID
 Gui, Add, Text, x162 y69 w100 h20 vHPText, HP/HPMAX
@@ -86,11 +91,13 @@ Gui, Add, Text, x285 y69 w70 h20 vCP, CP:
 Gui, Add, Text, x32 y219 w100 h20 +Center vWeight, Weight (KG):
 Gui, Add, Text, x32 y249 w100 h20 +Center vHeight, Height (M):
 Gui, Add, Button, x585 y279 w100 h30 gClose, Close
-Gui, Add, Button, x465 y279 w100 h30 gRelease, Release
+Gui, Add, Button, x465 y279 w100 h30 gTransfer, Transfer
+Gui, Add, Button, x345 y279 w100 h30 gBulkTransfer, Bulk Transfer
 Gui, Add, Text, x162 y124 w70 h20 vIV, IV's:
 Gui, Add, Text, x162 y144 w150 h20 vAIV, Attack: 
 Gui, Add, Text, x162 y164 w150 h20 vDIV, Defense: 
 Gui, Add, Text, x162 y184 w150 h20 vHIV, HP: 
+Gui, Add, Text, x162 y204 w150 h20 vPIV, Perfection: 
 Gui, Add, Picture, x340 y127 w16 h16 , %A_ScriptDir%\res\img\pokeball.png
 Gui, Add, Text, x360 y129 w230 h20 vPokeball, Pokeball Used: Standard
 Gui, Add, Text, x360 y159 w230 h20 vFWeight, Full Weight (KG): 
@@ -134,6 +141,7 @@ PokeList:
 		val12 := CSV_ReadCell("teamList", PokeList, 13)
 		val13 := CSV_ReadCell("teamList", PokeList, 14)
 		val17 := CSV_ReadCell("teamList", PokeList, 15)
+		val31 := round(((CSV_ReadCell("teamList", PokeList, 10) + CSV_ReadCell("teamList", PokeList, 11) + CSV_ReadCell("teamList", PokeList, 12)) / 45) * 100, 2)
 		
 		val14 := getIdenFromName(val1)
 		
@@ -163,7 +171,9 @@ PokeList:
 		GuiControl, show, CP
 		GuiControl, show, CPMult
 		GuiControl, show, IDBase
-		GuiControl, show, Release
+		GuiControl, show, Transfer
+		GuiControl, show, Bulk Transfer
+		GuiControl, show, PIV
 		GuiControl, Text, IV, IVs:
 		
 		GuiControl, Text, CP, CP: %val2%
@@ -174,6 +184,7 @@ PokeList:
 		GuiControl, Text, AIV, Attack: %val9%
 		GuiControl, Text, DIV, Defense: %val10%
 		GuiControl, Text, HIV, HP: %val11%
+		GuiControl, Text, PIV, Perfection: %val31%`%
 		GuiControl, Text, Pokeball, Pokeball Caught In: %val13%
 		GuiControl, Text, Move1, Move 1: %val5%
 		GuiControl, Text, Move2, Move 2: %val6%
@@ -194,7 +205,7 @@ PokeList:
 	
 return
 
-Release:
+Transfer:
 	
 	FileDelete, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
 	run, python "%A_ScriptDir%\libs\py\pogoapi\release.py" --uuid %val17%, %A_ScriptDir%\libs\py\pogoapi
@@ -224,9 +235,107 @@ Release:
 	
 	Gui, Submit, Nohide
 	
-	Msgbox, Release Finished!
+	Msgbox, Transfer Finished!
 return
 
+BulkTransfer:
+	Gui, Bulk:Add, ListBox, x20 y20 w240 h300 AltSubmit vTransferList 8, %amountList%
+	Gui, Bulk:Add, Button, x90 y320 w100 h30 gInitBulk, Bulk Transfer
+	Gui, Bulk:Show, h400 w280, Bulk Transfer
+	
+return
+
+InitBulk:
+	
+	MsgBox, 68, Bulk Transfer, This might take some time, would you like to continue?
+	IfMsgBox, No
+	{
+		return
+	}
+	
+	Gui, Submit, Nohide
+	
+	Decrement = 0
+
+	;debug MsgBox, %TransferList%
+	
+	transferListStorage := TransferList
+	
+	Loop, parse, TransferList, |
+	{
+		if A_LoopField = 1
+		{
+			Msgbox, You can't release your trainer! Skipping.
+			GoTo skipLoop
+		}
+	
+	
+		Random, rngsus, 100, 1000
+		
+		rngsusPassIn := 750 + rngsus
+	
+		sleep, %rngsusPassIn%
+	
+		
+		loopFieldStorage := A_LoopField
+		
+		uuidField := CSV_ReadCell("teamList", loopFieldStorage, 15)
+		
+		;debug MsgBox, %uuidField%
+		
+		FileDelete, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
+		run, python "%A_ScriptDir%\libs\py\pogoapi\release.py" --uuid %uuidField%, %A_ScriptDir%\libs\py\pogoapi
+		
+		continue = 0
+		
+		While continue = 0
+		{
+			IfExist, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
+			{
+				continue = 1
+			}
+		} 
+		
+		FileDelete, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
+		
+		
+		
+		
+		Gui, Submit, Nohide
+		
+		skipLoop:
+		
+		
+	}
+	
+	Sort, transferListStorage, R N D|
+	
+	Loop, parse, transferListStorage, |
+	{
+		if A_LoopField = 1
+		{
+			GoTo skipLoop2
+		}
+		TF_RemoveLines("!output.csv", A_LoopField, A_LoopField)
+
+		CSV_Load("output.csv", "teamList", ",")
+		refreshCache()
+		
+		skipLoop2:
+		
+	
+	}
+	
+
+	Gui, Bulk:Destroy
+
+	GuiControl, Main:Choose, PokeList, |1
+	
+	DefaultDDL()
+
+	MsgBox, Done!
+
+return
 
 Close:
 	FileDelete, %A_ScriptDir%\libs\py\pogoapi\info.txt
@@ -238,17 +347,19 @@ return
 	reload
 return
 
-GuiClose:
+MainGuiClose:
 	FileDelete, %A_ScriptDir%\libs\py\pogoapi\info.txt
 	FileDelete, %A_ScriptDir%\libs\py\pogoapi\session.txt
 	ExitApp
 return
 
-
+BulkGuiClose:
+	Gui, Bulk:Destroy
+return
 
 DefaultDDL()
 {
-	val1 := CSV_ReadCell("teamList", 1, 2)
+		val1 := CSV_ReadCell("teamList", 1, 2)
 		val2 := CSV_ReadCell("teamList", 1, 3)
 		val3 := CSV_ReadCell("teamList", 1, 4)
 		val4 := CSV_ReadCell("teamList", 1, 5)
@@ -269,7 +380,9 @@ DefaultDDL()
 		GuiControl, Hide, CP
 		GuiControl, Hide, CPMult
 		GuiControl, Hide, IDBase
-		GuiControl, Hide, Release
+		GuiControl, Hide, Transfer
+		GuiControl, Hide, Bulk Transfer
+		GuiControl, Hide, PIV
 		GuiControl, Text, IV, Stats:
 		GuiControl, Text, Weight, Battles Attempted: %val1% 
 		GuiControl, Text, Height, Battles Won: %val2% 
@@ -289,6 +402,17 @@ DefaultDDL()
 		
 		GuiControl, , HealthBar, %val21%
 }
+
+^\::
+	if Pokelist = 1
+	{
+		return
+	}
+	else
+	{
+		Goto, Transfer
+	}
+return
 
 refreshCache()
 {
@@ -329,8 +453,10 @@ refreshCache()
 		
 		tempVar1 += 1
 	}
-	GuiControl, , PokeList, |
-	GuiControl, , PokeList, %amountList%
+	GuiControl, Main: , PokeList, |
+	GuiControl, Main: , PokeList, %amountList%
+	GuiControl, Bulk: , TransferList, |
+	GuiControl, Bulk: , TransferList, %amountList%
 	
 	DefaultDDL()
 }

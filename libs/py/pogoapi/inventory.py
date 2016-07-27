@@ -37,7 +37,7 @@ class Items(dict):
     ITEM_STORAGE_UPGRADE = 1002
 
     def __init__(self):
-        super(dict, self).__init__(self)
+        super(dict, self).__init__()
         attributes = inspect.getmembers(Items, lambda attr :not(inspect.isroutine(attr)))
         for attr in attributes:
             if attr[0].isupper():

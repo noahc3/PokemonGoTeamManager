@@ -161,7 +161,7 @@ class Pokedex(dict):
     evolves = {}
 
     def __init__(self):
-        super(dict, self).__init__(self)
+        super(dict, self).__init__()
 
         # Some reflection, based on uppercase consts.
         attributes = inspect.getmembers(Pokedex, lambda attr :not(inspect.isroutine(attr)))

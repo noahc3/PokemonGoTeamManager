@@ -11,12 +11,7 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
-IfNotExist, C:\Python27
-{
-	MsgBox, 48, Error, Python 2.7 not detected! Please install Python 2.7.11!
-	ExitApp
-	Return
-}
+
 
 MsgBox, 68, Install Dependencies, This will install all required Python modules. Would you like to continue? If your Python version is lower than 2.7.9, make sure PIP is installed!
 IfMsgBox, No

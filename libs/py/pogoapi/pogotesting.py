@@ -256,7 +256,7 @@ if __name__ == '__main__':
         # General
         response = session.getInventory().party
         player = session.getInventory().stats
-        items = session.getInventory().bag
+        profile = session.getProfile()
 
         getInventory(session)
 
@@ -266,7 +266,7 @@ if __name__ == '__main__':
             os.remove("player.txt")
 
         output = open("input.txt", "w+")
-        output.write(bytes(items))
+        output.write(bytes(profile))
         output.write(bytes("\n"))
         output.write(bytes(player))
         output.write(bytes("\n"))

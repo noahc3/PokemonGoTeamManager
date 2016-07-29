@@ -13,7 +13,7 @@ OTHERWISE, simply submit an issue describing what you were doing when the error 
 ## Running and Compiling the Source Code
 If you are a user and not a developer, grab the binaries from the releases tab or http://pogo.worldofgrinding.com!
 
-The applications GUI is built in Autohotkey. It should be compatible with any autohotkey_L version (1.1.xxx, tested with Autohotkey 1.1.22.09) Install autohotkey and make sure all requirements from \libs\requirements.txt are installed (Install Dependencies.ahk should do this for you). Run auth.ahk to use the application.
+The applications GUI is built in Autohotkey. It should be compatible with any autohotkey_L version (1.1.xxx, tested with Autohotkey 1.1.22.09) Install autohotkey, Python 2.7, PIP, and make sure all requirements from \libs\requirements.txt are installed (Install Dependencies.ahk should do this for you). Run auth.ahk to use the application.
 
 To compile, use ahk2exe on auth.ahk, tv.ahk (Install Dependencies.ahk optional, not needed to function). Run the compiled auth.ahk to use. DO NOT compile any ahk files in \libs\!
 

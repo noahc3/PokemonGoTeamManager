@@ -4,6 +4,7 @@ import logging
 import time
 import sys
 import os
+import time
 from custom_exceptions import GeneralPogoException
 
 from api import PokeAuthSession
@@ -113,7 +114,7 @@ def sortCloseForts(session):
     ordered_forts = sorted(ordered_forts, key=lambda k: k['distance'])
     return [instance['fort'] for instance in ordered_forts]
 
-
+    
 # Find the fort closest to user
 def findClosestFort(session):
     # Find nearest fort (pokestop)
@@ -250,15 +251,50 @@ if __name__ == '__main__':
     # But is important to session
     session = poko_session.authenticate()
 
-    # Time to show off what we can do
+    # begin
     if session:
 
-        # General
-        response = session.getInventory().party
-        player = session.getInventory().stats
-        profile = session.getProfile()
+        # grab account info
+        profile = None
+        data = None
 
-        getInventory(session)
+        time.sleep(1.0)
+
+        try:
+            data = getInventory(session)
+            response = session.getInventory().party
+            player = session.getInventory().stats
+        except GeneralPogoException as c:
+            error = c
+            print(error, "Reauthenticating")
+            session.authenticate()
+            try:
+                data = getInventory(session)
+                response = session.getInventory().party
+                player = session.getInventory().stats
+            except GeneralPogoException as c:
+                error = c
+                print(error, "Failed to get inventory from server. Locking down.")
+
+
+        time.sleep(1.0)
+
+
+        try:
+            profile = session.getProfile()
+        except GeneralPogoException as c:
+            error = c
+            print(error, "Reauthenticating")
+            session.authenticate()
+            try:
+                profile = session.getProfile()
+            except GeneralPogoException as c:
+                error = c
+                print(error, "Failed to get profile from server. Locking down.")
+
+
+        
+        
 
         if os.path.exists("input.txt"):
             os.remove("input.txt")

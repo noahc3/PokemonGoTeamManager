@@ -287,7 +287,27 @@ if __name__ == '__main__':
 
         uuid = args.uuid
 
-        session.releasePokemonById(int(uuid))
+        print("Releasing UUID: ", uuid)
+
+        try:
+            session.releasePokemonById(int(uuid))
+        except GeneralPogoException as c:
+            error = c
+            print(error, "Reauthenticating")
+            session.authenticate()
+            try:
+                session.releasePokemonById(int(uuid))
+            except GeneralPogoException as c:
+                error = c
+                print(error, "Failed to transfer Pokemon by UUID. Locking down.")
+                errorLog = open("error.txt", "w+")
+                errorLog.write("Errored! Pokemon UUID Release FAILED!")
+                errorLog.write("\n")
+                errorLog.write(error)
+                errorLog.write("\n")
+                errorLog.write("Attempted UUID Release: ", uuid)
+                errorLog.close()
+
 
 
         tmpwrite = open("doneRelease.txt", "w+")

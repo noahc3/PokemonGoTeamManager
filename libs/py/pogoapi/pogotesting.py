@@ -249,11 +249,12 @@ if __name__ == '__main__':
     # Authenticate with a given location
     # Location is not inherent in authentication
     # But is important to session
+
+
     session = poko_session.authenticate()
 
     # begin
     if session:
-
         # grab account info
         profile = None
         data = None
@@ -275,6 +276,11 @@ if __name__ == '__main__':
             except GeneralPogoException as c:
                 error = c
                 print(error, "Failed to get inventory from server. Locking down.")
+                errorLog = open("error.txt", "w+")
+                errorLog.write("Errored! Inventory fetch FAILED!")
+                errorLog.write("\n")
+                errorLog.write(error)
+                errorLog.close()
 
 
         time.sleep(1.0)
@@ -291,6 +297,11 @@ if __name__ == '__main__':
             except GeneralPogoException as c:
                 error = c
                 print(error, "Failed to get profile from server. Locking down.")
+                errorLog = open("error.txt", "w+")
+                errorLog.write("Errored! Profile fetch FAILED!")
+                errorLog.write("\n")
+                errorLog.write(error)
+                errorLog.close()
 
 
         

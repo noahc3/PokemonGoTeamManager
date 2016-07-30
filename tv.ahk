@@ -298,7 +298,7 @@ InitBulk:
 	}
 	
 	FileDelete, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
-	run, %comspec% /k python "%A_ScriptDir%\libs\py\pogoapi\bulkrelease.py", %A_ScriptDir%\libs\py\pogoapi
+	run, python "%A_ScriptDir%\libs\py\pogoapi\bulkrelease.py", %A_ScriptDir%\libs\py\pogoapi
 	
 	continue = 0
 	

@@ -497,9 +497,19 @@ Parse()
 		;ID check
 		else if currentLine contains id
 		{
-			StringTrimLeft, var17, currentLine, 5
-			StringUpper, var17, var17, T
-			FileAppend, Pokemon UUID: %var1%, output.txt
+			if currentLine contains ,,
+			{
+				StringTrimLeft, var17, currentLine, 5
+				StringUpper, var17, var17, T
+				FileAppend, Pokemon UUID: %var1%, output.txt
+			}
+			else
+			{
+				StringTrimLeft, var17, currentLine, 3
+				StringUpper, var17, var17, T
+				FileAppend, Pokemon UUID: %var1%, output.txt
+			}
+			
 		}
 		else if currentLine contains POKECOIN
 		{

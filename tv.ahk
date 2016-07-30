@@ -210,7 +210,7 @@ return
 Transfer:
 	
 	FileDelete, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
-	run, python "%A_ScriptDir%\libs\py\pogoapi\release.py" --uuid %val17%, %A_ScriptDir%\libs\py\pogoapi
+	run, %comspec% /k python "%A_ScriptDir%\libs\py\pogoapi\release.py" --uuid %val17%, %A_ScriptDir%\libs\py\pogoapi
 	
 	continue = 0
 	
@@ -285,20 +285,7 @@ InitBulk:
 		
 		;debug MsgBox, %uuidField%
 		
-		FileDelete, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
-		run, python "%A_ScriptDir%\libs\py\pogoapi\release.py" --uuid %uuidField%, %A_ScriptDir%\libs\py\pogoapi
-		
-		continue = 0
-		
-		While continue = 0
-		{
-			IfExist, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
-			{
-				continue = 1
-			}
-		} 
-		
-		FileDelete, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
+		FileAppend, %uuidField%`n, %A_ScriptDir%\libs\py\pogoapi\releaseUUIDs.txt
 		
 		
 		
@@ -309,6 +296,21 @@ InitBulk:
 		
 		
 	}
+	
+	FileDelete, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
+	run, %comspec% /k python "%A_ScriptDir%\libs\py\pogoapi\bulkrelease.py", %A_ScriptDir%\libs\py\pogoapi
+	
+	continue = 0
+	
+	While continue = 0
+	{
+		IfExist, %A_ScriptDir%\libs\py\pogoapi\doneRelease.txt
+		{
+			continue = 1
+		}
+	} 
+	
+	FileDelete, %A_ScriptDir%\libs\py\pogoapi\releaseUUIDs.txt
 	
 	Sort, transferListStorage, R N D|
 	
@@ -334,6 +336,8 @@ InitBulk:
 	GuiControl, Main:Choose, PokeList, |1
 	
 	DefaultDDL()
+	
+	FileDelete, %A_ScriptDir%\libs\py\pogoapi\
 
 	MsgBox, Done!
 

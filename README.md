@@ -1,3 +1,5 @@
+**NOTICE: This project is on hold indefinitely until Niantic figures out what the heck they are doing with API access, third party tools, and PoGO in general. I'll also probably end up rewriting this in Java when the time comes, to avoid many of the problems the app has currently.**
+
 # Pokemon GO Team Manager
 
 View and manage your Pokemon GO accounts from your PC
